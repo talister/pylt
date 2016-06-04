@@ -10,7 +10,7 @@ import prologix_usb
 
 class hp5370b(prologix_usb.gpib_dev):
 
-	def __init__(self, name = "gpib0", adr = 15):
+	def __init__(self, name = "COM3", adr = 8):
 		prologix_usb.gpib_dev.__init__(self, name, adr)
 		self.id = "HP5370B"
 		self.attr("read_tmo_ms", 2000)
@@ -25,7 +25,7 @@ class hp5370b(prologix_usb.gpib_dev):
 	# Return the "Teach" string, a 21 char long byte array
 	def teach(self):
 		self.wr("TE")
-		return bytearray(d.rd_bin(21))
+		return bytearray(self.rd_bin(21))
 
 	###############################################################
 	# In TB1 mode, the counter returns 5 bytes directly from the
@@ -72,12 +72,12 @@ class hp5370b(prologix_usb.gpib_dev):
 	def read_fast(self, n):
 		l = list()
 		try:
-			d.wr("TB1")
+			self.wr("TB1")
 			for i in range(0,n):
 				l.append(self.rd_bin(5))
 		except:
 			pass
-		d.wr("TB0")
+		self.wr("TB0")
 		r = list()
 		for i in l:
 			r.append(self.bintofloat(i))
@@ -116,7 +116,7 @@ class hp5370b(prologix_usb.gpib_dev):
 			if i == 10 or i == 27 or i == 13 or i == 43:
 				y.append(27)
 			y.append(i)
-		d.wr(y)
+		self.wr(y)
 
 if __name__ == "__main__":
 	d=hp5370b()

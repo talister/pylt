@@ -9,7 +9,7 @@ import pylt
 
 pusb = dict()
 
-ver = "Prologix GPIB-USB Controller version 6.91"
+ver = "Prologix GPIB-USB Controller version 6.101"
 
 hwset = (
 		"addr",
@@ -39,7 +39,7 @@ class prologix_usb(object):
 		self.debug_fd = open("_." + name, "w")
 		self.debug("====", "=============================")
 
-		self.ser = serial.Serial("/dev/" + name, 115200, timeout = 0.5)
+		self.ser = serial.Serial(name, 115200, timeout = 0.5)
 		self.version_check()
 		self.curset = dict()
 		self.rd_settings()
