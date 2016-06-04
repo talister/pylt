@@ -21,24 +21,7 @@ class hp3478a(prologix_usb.gpib_dev):
         self.attr("eos", 0)
         self.attr("eoi", 1)
 
-    def read_dc_volts(self, ndig=5, nsamples=1):
-        print("Measuring %d samples of DC volts at %d.5 digits" % (nsamples, ndig))
-        if ndig < 3 or ndig > 5:
-            raise PyltError(self.id, "Invalid number of digits (must be 3, 4 or 5")
-
-    def read_ac_volts(self, ndig=5, nsamples=1, dbg=False):
-        '''Perform measurements of AC volts. Auto-ranging and auto-zero is turned on.
-        The number of digits [ndig, default=5] can be specified as 3, 4 or 5 (equivalent to 3 1/2, 4 1/2 or
-        5 1/2 digit display) and the number of samples [nsamples, default=1] can be specified.
-        A list of tuples of the UTC date/time and the readings is returned.'''
-
-        print("Measuring %d samples of AC volts at %d.5 digits" % (nsamples, ndig))
-        if ndig < 3 or ndig > 5:
-            raise PyltError(self.id, "Invalid number of digits (must be 3, 4 or 5")
-        # Set command string for AC volts (F2), auto-range (RA), number of digits (N<ndig>), 
-        # single trigger (T1), autozero on (Z1)
-        command = "F2RAN%dT1Z1" % ndig
-        self.wr(command)
+    def _take_samples(self, nsamples, dbg=False):
         samples = 0
         readings = []
         count = max(nsamples/30,1)
@@ -56,7 +39,41 @@ class hp3478a(prologix_usb.gpib_dev):
         print("Taken %d samples" % samples)
         return readings
 
-if __name__ == "__main__":
+    def read_dc_volts(self, ndig=5, nsamples=1, dbg=False):
+        '''Perform measurements of DC volts. Auto-ranging and auto-zero is turned on.
+        The number of digits [ndig, default=5] can be specified as 3, 4 or 5 (equivalent to 3 1/2, 4 1/2 or
+        5 1/2 digit display) and the number of samples [nsamples, default=1] can be specified.
+        A list of tuples of the UTC date/time and the readings is returned.'''
+    
+        print("Measuring %d samples of DC volts at %d.5 digits" % (nsamples, ndig))
+        if ndig < 3 or ndig > 5:
+            raise PyltError(self.id, "Invalid number of digits (must be 3, 4 or 5")
+        # Set command string for DC volts (F1), auto-range (RA), number of digits (N<ndig>), 
+        # single trigger (T1), autozero on (Z1)
+        command = "F1RAN%dT1Z1" % ndig
+        self.wr(command)
+        # Take readings and return them
+        readings = self._take_samples(nsamples, dbg)
+        return readings
+
+    def read_ac_volts(self, ndig=5, nsamples=1, dbg=False):
+        '''Perform measurements of AC volts. Auto-ranging and auto-zero is turned on.
+        The number of digits [ndig, default=5] can be specified as 3, 4 or 5 (equivalent to 3 1/2, 4 1/2 or
+        5 1/2 digit display) and the number of samples [nsamples, default=1] can be specified.
+        A list of tuples of the UTC date/time and the readings is returned.'''
+
+        print("Measuring %d samples of AC volts at %d.5 digits" % (nsamples, ndig))
+        if ndig < 3 or ndig > 5:
+            raise PyltError(self.id, "Invalid number of digits (must be 3, 4 or 5")
+        # Set command string for AC volts (F2), auto-range (RA), number of digits (N<ndig>), 
+        # single trigger (T1), autozero on (Z1)
+        command = "F2RAN%dT1Z1" % ndig
+        self.wr(command)
+        # Take readings and return them
+        readings = self._take_samples(nsamples, dbg)
+        return readings
+
+    if __name__ == "__main__":
 	d=hp3478a()
 	d.wr("D2HI FROM PYLT")
 	print("Device has no ID function")
