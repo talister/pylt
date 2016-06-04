@@ -26,7 +26,12 @@ class hp3478a(prologix_usb.gpib_dev):
         if ndig < 3 or ndig > 5:
             raise PyltError(self.id, "Invalid number of digits (must be 3, 4 or 5")
 
-    def read_ac_volts(self, ndig=5, nsamples=1):
+    def read_ac_volts(self, ndig=5, nsamples=1, dbg=False):
+        '''Perform measurements of AC volts. Auto-ranging and auto-zero is turned on.
+        The number of digits [ndig, default=5] can be specified as 3, 4 or 5 (equivalent to 3 1/2, 4 1/2 or
+        5 1/2 digit display) and the number of samples [nsamples, default=1] can be specified.
+        A list of tuples of the UTC date/time and the readings is returned.'''
+
         print("Measuring %d samples of AC volts at %d.5 digits" % (nsamples, ndig))
         if ndig < 3 or ndig > 5:
             raise PyltError(self.id, "Invalid number of digits (must be 3, 4 or 5")
@@ -36,16 +41,21 @@ class hp3478a(prologix_usb.gpib_dev):
         self.wr(command)
         samples = 0
         readings = []
+        count = max(nsamples/30,1)
         while samples < nsamples:
             t1 = time.time()
             time_of_read = datetime.utcnow()
             reading = self.rd()
             t2 = time.time()
             time_string = datetime.strftime(time_of_read, "%Y-%m-%d %H:%M:%S.%f")
-            print("Reading took %5.3f s" % (t2-t1,))
-            readings.append((time_string, float(reading)))
+            if dbg: print("Reading took %5.3f s" % (t2-t1,))
+            if (samples % count==0):
+                print("Taken %d samples" % samples)
+            readings.append((time_of_read, float(reading)))
             samples += 1
+        print("Taken %d samples" % samples)
         return readings
+
 if __name__ == "__main__":
 	d=hp3478a()
 	d.wr("D2HI FROM PYLT")
