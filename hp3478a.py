@@ -21,7 +21,7 @@ class hp3478a(prologix_usb.gpib_dev):
         self.attr("eos", 0)
         self.attr("eoi", 1)
 
-    def _setup_dmm(self, command, delay=2.0):
+    def _setup_dmm(self, command, delay=3.0):
         '''Clear the adaptor, send the command, sleep for settling and throw 
         away the first 2 readings'''
         self.clear()
@@ -172,4 +172,4 @@ Functions:
 	H0 HOME Command. Place into DC volts, autorange, trigger hold 4.5 digits, autozero on.
     H1 Measure DC Volts. As above but a single measure is triggered and reported.
 """
-    
+
