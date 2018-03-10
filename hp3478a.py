@@ -162,14 +162,43 @@ class hp3478a(prologix_usb.gpib_dev):
         return readings
         
     if __name__ == "__main__":
-	d=hp3478a()
-	d.wr("D2HI FROM PYLT")
-	print("Device has no ID function")
+        d=hp3478a()
+        d.wr("D2HI FROM PYLT")
+        print("Device has no ID function")
 
 doc="""
 Functions:
 ----------
-	H0 HOME Command. Place into DC volts, autorange, trigger hold 4.5 digits, autozero on.
+    H0 HOME Command. Place into DC volts, autorange, trigger hold 4.5 digits, autozero on.
     H1 Measure DC Volts. As above but a single measure is triggered and reported.
+    H2 Measure AC Volts. As H1, but AC voltage measurement is taken.
+    H3 Measure 2-wire Ohms. As H1, but 2-wire resistance measurement is taken.
+    H4 Measure 4-wire Ohms. As H1, but 4-wire resistance measurement is taken.
+    H5 Measure DC Amps. As H1, but DC current measurement is taken.
+    H6 Measure AC Amps. As H1, but AC current measurement is taken.
+    H7 Measure Extended ohms. As H1, but extended resistance (>30 Mohms) measurement is taken.
+
+    N{3,4,5} Select number of digits on display.
+    T[1-5]   Select trigger mode:
+                1: Internal trigger mode
+                2: External trigger mode
+                3: Single trigger mode
+                4: Trigger hold mode
+                5: Fast trigger (omit settling delay on AC volts and current and 2 highest ohm ranges)
+    Z{0,1}   Autozero off/on
+    D{1,3}   Display: 1: normal display, D2[text]: display [text] (12 chars max), 3: off
+
+    Functions and ranges:
+                                Range Codes
+    Function  Code  R-2  R-1   R0 R1  R2   R3  R4   R5    R6  R7   RA
+    DC Volts  F1    30mV 300mV 3V 30V 300V  +   +    +     +   +   Auto
+    AC Volts  F1     *   300mV 3V 30V 300V  +   +    +     +   +   Auto
+    2-W Ohms  F3     *     *   *  30Ω 300Ω 3kΩ 30kΩ 300kΩ 3MΩ 30MΩ Auto
+    4-W Ohms  F4     *     *   *  30Ω 300Ω 3kΩ 30kΩ 300kΩ 3MΩ 30MΩ Auto
+    DC Amps   F5     *   300mA 3A  +   +    +   +    +     +   +   Auto
+    AC Amps   F5     *   300mA 3A  +   +    +   +    +     +   +   Auto
+    ExtendedΩ F7
+    * indicates code selects lowest (most sensitive) range
+    + indicates code selects highest (least sensitive) range
 """
 
