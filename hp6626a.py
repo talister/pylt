@@ -39,9 +39,9 @@ hp6626a_errors = {
 
 class hp6626a(prologix_usb.gpib_dev):
 
-	def __init__(self, name = "gpib1", adr = 5):
+	def __init__(self, name = "gpib0", adr = 5):
 		prologix_usb.gpib_dev.__init__(self, name, adr)
-		self.attr("read_tmo_ms", 300)
+		self.attr("read_tmo_ms", 500)
 		self.spoll_cmd = 0x10
 		self.wait_cmd(12)
 		x = self.ask("ID?")
@@ -64,8 +64,8 @@ class hp6626a(prologix_usb.gpib_dev):
 
 		# Voltage ranges
 		self.__vranges = {
-			1: (7.07, 50.5),
-			2: (7.07, 50.5),
+			1: (7.00, 50.5),
+			2: (7.00, 50.5),
 			3: (16.16, 50.5),
 			4: (16.16, 50.5)
 		}
@@ -75,9 +75,8 @@ class hp6626a(prologix_usb.gpib_dev):
 			1: (.01545, .515),
 			2: (.01545, .515),
 			3: (.206, 2.06),
-			4: (0.206, 2.06)
+			4: (.206, 2.06)
 		}
-
 
 		for i in (1, 2, 3, 4, 12, 34):
 			self.autorange[i] = True
@@ -232,7 +231,6 @@ class hp6626a(prologix_usb.gpib_dev):
 				self.vrange(chan, v2);
 			assert v2 <= self.__vrset[chan]
 			c1,c2 = self.__dual[chan]
-			assert self.__irset[c1] == self.__irset[c2]
 			vc = self.__vset[c1] - self.__vset[c2]
 			v0 = self.__v0(chan)
 			if volt * vc < 0:
@@ -281,7 +279,7 @@ class hp6626a(prologix_usb.gpib_dev):
 				assert False
 			assert j != None
 			if self.__irset[chan] != ix:
-				self.wr("IRSET %d" % chan + " %.1f" % ix)
+				self.wr("IRSET %d" % chan + " %.3f" % ix)
 			self.__irset[chan] = ix
 		self.AOK()
 
