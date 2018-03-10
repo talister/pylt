@@ -63,3 +63,4 @@ target/
 # Logfiles from GPIB code
 _.COM?
 _.gpib?
+_._dev*
