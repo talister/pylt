@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf8 -*-
 
 # Python Imports
 import sys
@@ -12,7 +13,7 @@ from pylt import PyltError
 
 class hp3478a(prologix_usb.gpib_dev):
     '''Class for talking to HP 3478A bench multimeters'''
-	
+
     def __init__(self, name = "COM3", adr = 23):
         prologix_usb.gpib_dev.__init__(self, name, adr)
         self.id = "HP3478A"
@@ -161,10 +162,10 @@ class hp3478a(prologix_usb.gpib_dev):
         readings = self._take_samples(nsamples, dbg)
         return readings
         
-    if __name__ == "__main__":
-        d=hp3478a()
-        d.wr("D2HI FROM PYLT")
-        print("Device has no ID function")
+if __name__ == "__main__":
+    d=hp3478a()
+    d.wr("D2HI FROM PYLT")
+    print("Device has no ID function")
 
 doc="""
 Functions:
