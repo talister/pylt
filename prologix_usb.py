@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/env python
 
 from __future__ import print_function
 
@@ -6,6 +6,7 @@ import sys
 import time
 import serial
 import pylt
+import os
 
 pusb = dict()
 
@@ -36,7 +37,9 @@ class prologix_usb(object):
 
 	def __init__(self, name):
 		self.name = name
-		self.debug_fd = open(name, "w")
+                # Create logfile
+                log_file = "_." + name.replace(os.path.sep, '_')
+		self.debug_fd = open(log_file, "w")
 		self.debug("====", "=============================")
 
 		self.ser = serial.Serial(name, 115200, timeout = 0.5)
