@@ -4,7 +4,7 @@
 # Python Imports
 import sys
 import math
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 
 # Python Imports
@@ -161,7 +161,36 @@ class hp3478a(prologix_usb.gpib_dev):
         # Take readings and return them
         readings = self._take_samples(nsamples, dbg)
         return readings
-        
+
+    def write_results(self, out_file, readings, units=None):
+        """Write out the set of <readings> to <out_file>.
+        The format of the output file is:
+        reading #, datetime, time since first reading (secs), measurement
+        """
+
+        lines_written = 0
+        with open(out_file, "w") as out_fh:
+            # Write header
+            if units:
+                unit = " (" + units + ")"
+            print("# reading #, datetime, time since first reading (secs), measurement"+unit,file=out_fh)
+            i = 0
+            t0 = readings[0][0]
+            t1 = readings[-1][0]
+            span = t1 - t0
+            dt_width = len(str(span.total_seconds()))
+            index_width = len(str(len(readings)))
+
+            for reading in readings:
+                time_string = reading[0].strftime("%Y-%m-%dT%H:%M:%S")
+                dt = reading[0] - t0
+                dt = dt.total_seconds()
+                line = "{0:0{index_width}d} {1} {2:0{dt_width}.1f} {3:.5f}".format(i, reading[0], dt, reading[1], index_width=index_width, dt_width=dt_width)
+                print(line, file=out_fh)
+                i+=1
+            lines_written = i
+        return lines_written
+
 if __name__ == "__main__":
     d=hp3478a()
     d.wr("D2HI FROM PYLT")
