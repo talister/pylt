@@ -2,6 +2,7 @@
 # -*- coding: utf8 -*-
 
 # Python Imports
+from __future__ import print_function
 import sys
 import math
 from datetime import datetime, timedelta
