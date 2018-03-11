@@ -186,7 +186,7 @@ class hp3478a(prologix_usb.gpib_dev):
                 time_string = reading[0].strftime("%Y-%m-%dT%H:%M:%S")
                 dt = reading[0] - t0
                 dt = dt.total_seconds()
-                line = "{0:0{index_width}d} {1} {2:0{dt_width}.1f} {3:.5f}".format(i, reading[0], dt, reading[1], index_width=index_width, dt_width=dt_width)
+                line = "{0:0{index_width}d} {1} {2:0{dt_width}.1f} {3:+.5f}".format(i, time_string, dt, reading[1], index_width=index_width, dt_width=dt_width)
                 print(line, file=out_fh)
                 i+=1
             lines_written = i
